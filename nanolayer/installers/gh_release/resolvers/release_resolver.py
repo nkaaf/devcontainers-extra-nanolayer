@@ -60,14 +60,15 @@ class ReleaseResolver:
         all_version_tags = cls.get_version_tags(repo, release_tag_regex)
 
         valid_versions = list(filter(cls.valid_version, all_version_tags))
-
         if len(valid_versions) != len(all_version_tags):
             logger.warning(
                 "The following release versions were filtered out as invalid: %s",
                 str(set(all_version_tags) - set(valid_versions)),
             )
 
-        return natsorted(valid_versions)[-1]
+        normalized_valid_versions = [version[1:] if version.startswith("v") else version for version in valid_versions]
+
+        return natsorted(normalized_valid_versions)[-1]
 
     @classmethod
     def get_latest_release_tag(
